@@ -1,0 +1,7 @@
+{
+  "personal_access_token": {
+    "type": "string",
+    "description": "个人访问令牌",
+    "hint": "用于访问V2EX API的个人访问令牌，可在V2EX网站的个人设置中生成"
+  }
+}
