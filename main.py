@@ -5,7 +5,7 @@ from astrbot.core.config.astrbot_config import AstrBotConfig
 from .v2ex_api import V2exAPI
 
 
-@register("astrbot_plugin_v2ex", "un4gt", "通过 astrbot 浏览 v2ex 网站", "1.0.0")
+@register("astrbot_plugin_v2ex", "un4gt", "通过 astrbot 浏览 v2ex 网站", "1.0.1")
 class V2ex(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
