@@ -1,5 +1,5 @@
 name: astrbot_plugin_v2ex
 desc: 通过 astrbot 浏览 v2ex 网站 。
-version: v1.0.0
+version: v1.0.1
 author: un4gt # 作者
 repo: https://github.com/un4gt/astrbot_plugin_v2ex
