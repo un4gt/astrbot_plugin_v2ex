@@ -45,7 +45,7 @@ class V2exAPI:
                     logger.error("Personal Access Token 无效或已过期")
                     return None
                 else:
-                    logger.error(f"获取通知列表失败，HTTP状态码: {response.status}")
+                    logger.error(f"获取通知列表失败，HTTP状态码: {response.status_code}")
                     return None
         except httpx.RequestError as e:
             logger.error(f"网络请求失败: {str(e)}")
@@ -71,7 +71,7 @@ class V2exAPI:
                 response = await client.get(url)
                 if response.status_code == 200:
                     data = response.json()
-                    logger.info("成功获取个人信息")
+                    logger.info("成功获取个人信息: %s", data)
                     return data
                 elif response.status_code == 401:
                     logger.error("Personal Access Token 无效或已过期")
