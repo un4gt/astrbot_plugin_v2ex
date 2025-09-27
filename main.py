@@ -112,39 +112,6 @@ class V2ex(Star):
         """节点相关命令"""
         pass
 
-    @nodes.command("list")
-    async def list(self, event: AstrMessageEvent, page: int = 1):
-        """获取可用的节点列表
-
-        Args:
-            page: 页码，默认为1
-        """
-        if not self.api_client:
-            yield event.plain_result(
-                "插件未正确初始化，请检查配置中的 personal_access_token"
-            )
-            return
-
-        try:
-            nodes_data = await self.api_client.get_nodes_list()
-
-            if nodes_data is None:
-                yield event.plain_result("获取节点列表失败，请检查网络连接")
-                return
-
-            if not nodes_data:
-                yield event.plain_result("📋 暂无节点信息")
-                return
-
-            # 格式化节点列表（分页显示）
-            formatted_nodes = self.api_client.format_nodes_list(
-                nodes_data, page=page, page_size=20
-            )
-            yield event.plain_result(formatted_nodes)
-
-        except Exception as e:
-            logger.error(f"处理节点列表命令时发生错误: {str(e)}")
-            yield event.plain_result(f"获取节点列表时发生错误: {str(e)}")
 
     async def terminate(self):
         """插件卸载时的清理工作"""
