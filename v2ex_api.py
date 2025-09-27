@@ -1,7 +1,7 @@
-import aiohttp
-import json
+from httpx import AsyncClient
 from typing import Dict, List, Optional, Any
 from astrbot.api import logger
+import httpx
 
 
 class V2exAPI:
@@ -9,7 +9,7 @@ class V2exAPI:
 
     def __init__(self, personal_access_token: str):
         self.token = personal_access_token
-        self.base_url = "https://www.v2ex.com/api"
+        self.base_url = "https://www.v2ex.com/api/v2"
         self.v2_base_url = "https://www.v2ex.com/api/v2"
 
     def _get_headers(self) -> Dict[str, str]:
@@ -35,24 +35,19 @@ class V2exAPI:
         params = {"p": page}
 
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(
-                    url,
-                    params=params,
-                    headers=self._get_headers(),
-                    timeout=aiohttp.ClientTimeout(total=30),
-                ) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        logger.info(f"成功获取通知列表，页码: {page}")
-                        return data
-                    elif response.status == 401:
-                        logger.error("Personal Access Token 无效或已过期")
-                        return None
-                    else:
-                        logger.error(f"获取通知列表失败，HTTP状态码: {response.status}")
-                        return None
-        except aiohttp.ClientError as e:
+            async with AsyncClient(headers=self._get_headers()) as client:
+                response = await client.get(url, params=params)
+                if response.status_code == 200:
+                    data = await response.json()
+                    logger.info(f"成功获取通知列表，页码: {page}")
+                    return data
+                elif response.status_code == 401:
+                    logger.error("Personal Access Token 无效或已过期")
+                    return None
+                else:
+                    logger.error(f"获取通知列表失败，HTTP状态码: {response.status}")
+                    return None
+        except httpx.RequestError as e:
             logger.error(f"网络请求失败: {str(e)}")
             return None
         except Exception as e:
@@ -72,23 +67,19 @@ class V2exAPI:
         url = f"{self.v2_base_url}/member"
 
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(
-                    url,
-                    headers=self._get_headers(),
-                    timeout=aiohttp.ClientTimeout(total=30),
-                ) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        logger.info("成功获取个人信息")
-                        return data
-                    elif response.status == 401:
-                        logger.error("Personal Access Token 无效或已过期")
-                        return None
-                    else:
-                        logger.error(f"获取个人信息失败，HTTP状态码: {response.status}")
-                        return None
-        except aiohttp.ClientError as e:
+            async with AsyncClient(headers=self._get_headers()) as client:
+                response = await client.get(url)
+                if response.status_code == 200:
+                    data = await response.json()
+                    logger.info("成功获取个人信息")
+                    return data
+                elif response.status_code == 401:
+                    logger.error("Personal Access Token 无效或已过期")
+                    return None
+                else:
+                    logger.error(f"获取个人信息失败，HTTP状态码: {response.status_code}")
+                    return None
+        except httpx.RequestError as e:
             logger.error(f"网络请求失败: {str(e)}")
             return None
         except Exception as e:
@@ -105,18 +96,16 @@ class V2exAPI:
         url = f"{self.base_url}/nodes/all.json"
 
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(
-                    url, timeout=aiohttp.ClientTimeout(total=30)
-                ) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        logger.info(f"成功获取节点列表，共 {len(data)} 个节点")
-                        return data
-                    else:
-                        logger.error(f"获取节点列表失败，HTTP状态码: {response.status}")
-                        return None
-        except aiohttp.ClientError as e:
+            async with AsyncClient() as client:
+                response = await client.get(url)
+                if response.status_code == 200:
+                    data = await response.json()
+                    logger.info(f"成功获取节点列表，共 {len(data)} 个节点")
+                    return data
+                else:
+                    logger.error(f"获取节点列表失败，HTTP状态码: {response.status_code}")
+                    return None
+        except httpx.RequestError as e:
             logger.error(f"网络请求失败: {str(e)}")
             return None
         except Exception as e:
